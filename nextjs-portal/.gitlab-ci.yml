@@ -14,6 +14,7 @@ build:
   script:
     - npm ci
     - npx prisma generate
+    - npm run test:coverage
     - npm run build
   artifacts:
     expire_in: 1 day
