@@ -243,6 +243,24 @@ docker compose up --build
 `backend/Dockerfile` (multi-stage SDK -> ASP.NET runtime) e `frontend/Dockerfile`
 (build Angular servido por nginx).
 
+## Banco de dados: SQLite ou MSSQL
+
+O provider do EF Core é selecionável por configuração (`Database:Provider`):
+
+- **SQLite** (padrão) — zero configuração, ideal para rodar local.
+- **SQL Server (MSSQL)** — defina `Database__Provider=SqlServer` e
+  `ConnectionStrings__SqlServer=...`. Há um compose pronto:
+
+```bash
+docker compose -f docker-compose.mssql.yml up --build   # sobe SQL Server + API + frontend
+```
+
+## Kubernetes
+
+```bash
+kubectl apply -f k8s/manifests.yaml
+```
+
 ## CI/CD
 
 - **GitHub Actions:** `.github/workflows/ci.yml` (build + testes .NET, build Angular, build das imagens Docker)

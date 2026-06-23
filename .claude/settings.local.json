@@ -34,7 +34,9 @@
       "Bash(docker --version)",
       "Bash(ls */README.md)",
       "Bash(ls README.md)",
-      "Bash(ls -d */)"
+      "Bash(ls -d */)",
+      "Bash(node -e \"console.log\\(require\\('@node-saml/node-saml/package.json'\\).version\\)\")",
+      "Bash(kubectl apply *)"
     ]
   }
 }

@@ -1,0 +1,70 @@
+# Kubernetes — CineGraph (API .NET GraphQL + Frontend React)
+# Aplicar:  kubectl apply -f k8s/manifests.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cinegraph-api
+  labels: { app: cinegraph-api }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: cinegraph-api }
+  template:
+    metadata:
+      labels: { app: cinegraph-api }
+    spec:
+      containers:
+        - name: api
+          image: cinegraph-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+          readinessProbe:
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cinegraph-api
+spec:
+  selector: { app: cinegraph-api }
+  ports:
+    - port: 5245
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cinegraph-web
+  labels: { app: cinegraph-web }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: cinegraph-web }
+  template:
+    metadata:
+      labels: { app: cinegraph-web }
+    spec:
+      containers:
+        - name: web
+          image: cinegraph-web:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cinegraph-web
+spec:
+  selector: { app: cinegraph-web }
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer

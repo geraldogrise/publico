@@ -1,0 +1,52 @@
+# Kubernetes — Portal Corporativo (Next.js)
+# Aplicar:  kubectl apply -f k8s/manifests.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-portal
+  labels: { app: nextjs-portal }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: nextjs-portal }
+  template:
+    metadata:
+      labels: { app: nextjs-portal }
+    spec:
+      containers:
+        - name: web
+          image: nextjs-portal:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: NEXTAUTH_URL
+              value: "http://localhost:3000"
+            - name: DATABASE_URL
+              value: "file:./dev.db"
+            - name: NEXTAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nextjs-portal-secrets
+                  key: nextauth-secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nextjs-portal-secrets
+type: Opaque
+stringData:
+  nextauth-secret: "troque-em-producao-com-um-segredo-forte"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextjs-portal
+spec:
+  selector: { app: nextjs-portal }
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: LoadBalancer

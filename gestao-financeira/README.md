@@ -65,6 +65,11 @@ docker compose up --build
 # Frontend: http://localhost:5173
 ```
 
+## ☸️ Kubernetes
+```bash
+kubectl apply -f k8s/manifests.yaml
+```
+
 ## ⚙️ CI
 - **GitHub Actions:** `.github/workflows/ci.yml`
 - **GitLab CI:** `.gitlab-ci.yml`

@@ -43,10 +43,10 @@ GitHub Actions e GitLab CI).
 | Back-end | .NET 9, Node.js/Express |
 | APIs | REST (OpenAPI/Swagger) e **GraphQL** (HotChocolate) |
 | Arquitetura | Hexagonal (Ports & Adapters), DDD, Clean Architecture, SOLID, Clean Code |
-| Auth | JWT, NextAuth, AuthGuard/Interceptors, `[Authorize]` |
-| Persistência | EF Core + SQLite, Prisma + SQLite |
+| Auth | JWT, NextAuth, **OAuth 2.0 (GitHub/Google)**, **SAML 2.0**, AuthGuard/Interceptors, `[Authorize]` |
+| Persistência | EF Core (SQLite / **MSSQL**), Prisma + SQLite |
 | Testes | xUnit, Jest, supertest — meta de 70% de cobertura |
-| DevOps | Docker, docker-compose, GitHub Actions, GitLab CI |
+| DevOps | Docker, docker-compose, **Kubernetes**, GitHub Actions, GitLab CI |
 
 ---
 

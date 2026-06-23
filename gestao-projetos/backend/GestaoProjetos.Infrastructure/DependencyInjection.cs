@@ -16,10 +16,25 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Default")
-            ?? "Data Source=gestao-projetos.db";
+        // Provider selecionavel por configuracao: "Sqlite" (padrao) ou "SqlServer" (MSSQL).
+        var provider = configuration["Database:Provider"] ?? "Sqlite";
 
-        services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
+        services.AddDbContext<AppDbContext>(options =>
+        {
+            if (provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+            {
+                var mssql = configuration.GetConnectionString("SqlServer")
+                    ?? configuration.GetConnectionString("Default")
+                    ?? "Server=localhost,1433;Database=GestaoProjetos;User Id=sa;Password=Your_password123;TrustServerCertificate=True";
+                options.UseSqlServer(mssql);
+            }
+            else
+            {
+                var sqlite = configuration.GetConnectionString("Default")
+                    ?? "Data Source=gestao-projetos.db";
+                options.UseSqlite(sqlite);
+            }
+        });
 
         // O DbContext implementa IUnitOfWork.
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());

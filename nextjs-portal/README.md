@@ -146,6 +146,23 @@ docker compose up --build
 
 O `Dockerfile` usa o **output standalone** do Next.js (imagem enxuta).
 
+## Autenticação (3 modos)
+
+- **Credentials (NextAuth):** login email/senha (`admin@demo.com` / `123456`), sessão JWT.
+- **OAuth 2.0:** providers **GitHub** e **Google** habilitam-se automaticamente quando
+  as variáveis `GITHUB_ID/GITHUB_SECRET` e/ou `GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET` existem (`.env.example`).
+- **SAML 2.0:** Service Provider via `@node-saml/node-saml` com route handlers:
+  - `GET /api/saml/login` → redireciona ao IdP (SSO)
+  - `POST /api/saml/acs` → consome a asserção e cria sessão
+  - `GET /api/saml/metadata` → metadados do SP (para registrar no IdP)
+  - Configure `SAML_ENTRY_POINT` e `SAML_IDP_CERT` (ex.: IdP de teste https://samltest.id).
+
+## Kubernetes
+
+```bash
+kubectl apply -f k8s/manifests.yaml
+```
+
 ## CI/CD
 
 - **GitHub Actions:** `.github/workflows/ci.yml` (build Next.js + build da imagem Docker)

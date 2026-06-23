@@ -1,0 +1,78 @@
+# Kubernetes — Gestao Financeira (API Node + Frontend React)
+# Aplicar:  kubectl apply -f k8s/manifests.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gestao-financeira-api
+  labels: { app: gestao-financeira-api }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: gestao-financeira-api }
+  template:
+    metadata:
+      labels: { app: gestao-financeira-api }
+    spec:
+      containers:
+        - name: api
+          image: gestao-financeira-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3001
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3001"
+            - name: DATABASE_URL
+              value: "file:./dev.db"
+            - name: JWT_SECRET
+              value: "troque-em-producao"
+            - name: CORS_ORIGIN
+              value: "http://localhost:5173"
+          readinessProbe:
+            httpGet: { path: /health, port: 3001 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gestao-financeira-api
+spec:
+  selector: { app: gestao-financeira-api }
+  ports:
+    - port: 3001
+      targetPort: 3001
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gestao-financeira-web
+  labels: { app: gestao-financeira-web }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: gestao-financeira-web }
+  template:
+    metadata:
+      labels: { app: gestao-financeira-web }
+    spec:
+      containers:
+        - name: web
+          image: gestao-financeira-web:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gestao-financeira-web
+spec:
+  selector: { app: gestao-financeira-web }
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer

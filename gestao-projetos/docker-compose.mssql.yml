@@ -1,0 +1,32 @@
+# Variante com SQL Server (MSSQL) em vez de SQLite.
+# Uso:  docker compose -f docker-compose.mssql.yml up --build
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: gestao-projetos-mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Your_password123
+    ports:
+      - "1433:1433"
+
+  backend:
+    build: ./backend
+    container_name: gestao-projetos-api
+    depends_on:
+      - mssql
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # Seleciona o provider EF Core MSSQL e a connection string.
+      - Database__Provider=SqlServer
+      - ConnectionStrings__SqlServer=Server=mssql,1433;Database=GestaoProjetos;User Id=sa;Password=Your_password123;TrustServerCertificate=True
+
+  frontend:
+    build: ./frontend
+    container_name: gestao-projetos-web
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend

@@ -78,3 +78,8 @@ docker compose up --build
 - **GitLab CI:** `.gitlab-ci.yml`
 
 (ambos rodam build + testes do backend e build do frontend)
+
+## ☸️ Kubernetes
+```bash
+kubectl apply -f k8s/manifests.yaml
+```

@@ -1,0 +1,71 @@
+# Kubernetes — Gestao de Projetos (API .NET + Frontend Angular)
+# Aplicar:  kubectl apply -f k8s/manifests.yaml
+# (build local das imagens: docker build -t gestao-projetos-api ./backend ; docker build -t gestao-projetos-web ./frontend)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gestao-projetos-api
+  labels: { app: gestao-projetos-api }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: gestao-projetos-api }
+  template:
+    metadata:
+      labels: { app: gestao-projetos-api }
+    spec:
+      containers:
+        - name: api
+          image: gestao-projetos-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+          readinessProbe:
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gestao-projetos-api
+spec:
+  selector: { app: gestao-projetos-api }
+  ports:
+    - port: 5000
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gestao-projetos-web
+  labels: { app: gestao-projetos-web }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: gestao-projetos-web }
+  template:
+    metadata:
+      labels: { app: gestao-projetos-web }
+    spec:
+      containers:
+        - name: web
+          image: gestao-projetos-web:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gestao-projetos-web
+spec:
+  selector: { app: gestao-projetos-web }
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer
