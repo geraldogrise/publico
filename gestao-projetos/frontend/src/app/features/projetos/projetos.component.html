@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="flex entre centro cabecalho-pagina">
+    <div>
+      <h1>Projetos</h1>
+      <p class="subtitulo">{{ total() }} projeto(s) cadastrado(s)</p>
+    </div>
+    <button class="btn btn-primario" (click)="alternarForm()">
+      {{ mostrarForm() ? 'Cancelar' : '+ Novo projeto' }}
+    </button>
+  </div>
+
+  @if (erro()) {
+    <div class="alerta">{{ erro() }}</div>
+  }
+
+  @if (mostrarForm()) {
+    <form class="cartao form-novo" [formGroup]="form" (ngSubmit)="criar()">
+      <h3>Novo projeto</h3>
+      <div class="grade-form">
+        <div class="campo">
+          <label for="nome">Nome</label>
+          <input id="nome" type="text" formControlName="nome" placeholder="Ex.: Portal do Cliente" />
+          @if (form.controls.nome.touched && form.controls.nome.invalid) {
+            <span class="erro-campo">Informe um nome com ao menos 3 caracteres.</span>
+          }
+        </div>
+        <div class="campo">
+          <label for="equipe">Equipe</label>
+          <select id="equipe" formControlName="equipeId">
+            @for (eq of equipes(); track eq.id) {
+              <option [value]="eq.id">{{ eq.nome }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="descricao">Descricao</label>
+        <textarea id="descricao" rows="2" formControlName="descricao"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primario" [disabled]="salvando()">
+        {{ salvando() ? 'Salvando...' : 'Criar projeto' }}
+      </button>
+    </form>
+  }
+
+  @if (carregando()) {
+    <p class="vazio">Carregando projetos...</p>
+  } @else if (projetos().length === 0) {
+    <p class="vazio">Nenhum projeto ainda. Crie o primeiro!</p>
+  } @else {
+    <div class="grade-projetos">
+      @for (p of projetos(); track p.id) {
+        <a class="cartao card-projeto" [routerLink]="['/projetos', p.id, 'board']">
+          <div class="flex entre centro">
+            <span class="badge" [style.background]="corStatus(p.status)">
+              {{ rotuloStatus[p.status] }}
+            </span>
+            <button class="remover" (click)="remover(p, $event)" title="Remover">x</button>
+          </div>
+          <h3>{{ p.nome }}</h3>
+          <p class="desc">{{ p.descricao || 'Sem descricao.' }}</p>
+          <div class="rodape">
+            <span>{{ p.equipeNome || 'Sem equipe' }}</span>
+            <span>{{ p.totalTarefas }} tarefa(s)</span>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

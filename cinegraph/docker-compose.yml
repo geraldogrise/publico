@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: ./backend
+    container_name: cinegraph-api
+    ports:
+      - "5245:8080"   # GraphQL em http://localhost:5245/graphql
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_GRAPHQL_URL: http://localhost:5245/graphql
+    container_name: cinegraph-web
+    ports:
+      - "5174:80"     # http://localhost:5174
+    depends_on:
+      - backend

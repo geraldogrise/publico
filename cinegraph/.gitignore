@@ -1,0 +1,22 @@
+# .NET
+bin/
+obj/
+TestResults/
+*.user
+
+# Node / Vite
+node_modules/
+dist/
+
+# Banco local
+*.db
+*.db-journal
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# SO
+.DS_Store
+Thumbs.db

@@ -1,0 +1,54 @@
+.tela-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.caixa-login {
+  width: 100%;
+  max-width: 380px;
+  padding: 2rem;
+}
+
+.cabecalho {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.cabecalho .logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--cor-primaria);
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.cabecalho h1 {
+  font-size: 1.3rem;
+}
+
+.cabecalho p {
+  color: var(--cor-texto-suave);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.largura-total {
+  width: 100%;
+  justify-content: center;
+}
+
+.dica {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--cor-texto-suave);
+  margin: 1rem 0 0;
+}

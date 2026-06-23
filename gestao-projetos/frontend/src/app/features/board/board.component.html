@@ -1,0 +1,113 @@
+<div class="container">
+  <div class="trilha-voltar">
+    <a routerLink="/projetos" class="link-voltar">&larr; Projetos</a>
+  </div>
+
+  <div class="flex entre centro cabecalho-board">
+    <div>
+      <h1>{{ projeto()?.nome || 'Board' }}</h1>
+      <p class="subtitulo">{{ projeto()?.descricao || 'Quadro Kanban de tarefas' }}</p>
+    </div>
+    <button class="btn btn-primario" (click)="alternarForm()">
+      {{ mostrarForm() ? 'Cancelar' : '+ Nova tarefa' }}
+    </button>
+  </div>
+
+  @if (erro()) {
+    <div class="alerta">{{ erro() }}</div>
+  }
+
+  @if (mostrarForm()) {
+    <form class="cartao form-tarefa" [formGroup]="form" (ngSubmit)="criar()">
+      <h3>Nova tarefa</h3>
+      <div class="campo">
+        <label for="titulo">Titulo</label>
+        <input id="titulo" type="text" formControlName="titulo" placeholder="Ex.: Implementar tela X" />
+        @if (form.controls.titulo.touched && form.controls.titulo.invalid) {
+          <span class="erro-campo">Informe um titulo com ao menos 3 caracteres.</span>
+        }
+      </div>
+      <div class="campo">
+        <label for="descricao">Descricao</label>
+        <textarea id="descricao" rows="2" formControlName="descricao"></textarea>
+      </div>
+      <div class="grade-form">
+        <div class="campo">
+          <label for="prioridade">Prioridade</label>
+          <select id="prioridade" formControlName="prioridade">
+            @for (p of prioridades; track p) {
+              <option [value]="p">{{ rotuloPrioridade[p] }}</option>
+            }
+          </select>
+        </div>
+        <div class="campo">
+          <label for="status">Coluna inicial</label>
+          <select id="status" formControlName="status">
+            @for (c of colunas; track c) {
+              <option [value]="c">{{ rotuloStatus[c] }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primario" [disabled]="salvando()">
+        {{ salvando() ? 'Salvando...' : 'Criar tarefa' }}
+      </button>
+    </form>
+  }
+
+  @if (carregando()) {
+    <p class="vazio">Carregando board...</p>
+  } @else {
+    <div class="board">
+      @for (col of colunas; track col) {
+        <div
+          class="coluna"
+          (dragover)="permitirSoltar($event)"
+          (drop)="aoSoltar(col)"
+        >
+          <div class="coluna-cabecalho" [attr.data-status]="col">
+            <span>{{ rotuloStatus[col] }}</span>
+            <span class="contador">{{ tarefasDe(col).length }}</span>
+          </div>
+
+          <div class="coluna-corpo">
+            @for (t of tarefasDe(col); track t.id) {
+              <div
+                class="cartao card-tarefa"
+                draggable="true"
+                (dragstart)="aoArrastar(t)"
+                [style.border-left-color]="corPrioridade(t.prioridade)"
+              >
+                <div class="flex entre centro">
+                  <span class="prio" [style.color]="corPrioridade(t.prioridade)">
+                    {{ rotuloPrioridade[t.prioridade] }}
+                  </span>
+                  <button class="remover" (click)="remover(t, $event)" title="Remover">x</button>
+                </div>
+                <h4>{{ t.titulo }}</h4>
+                @if (t.descricao) {
+                  <p class="desc">{{ t.descricao }}</p>
+                }
+                @if (t.etiquetas.length > 0) {
+                  <div class="etiquetas">
+                    @for (e of t.etiquetas; track e.id) {
+                      <span class="badge" [style.background]="e.cor">{{ e.nome }}</span>
+                    }
+                  </div>
+                }
+                <div class="rodape">
+                  <span>{{ t.responsavelNome || 'Sem responsavel' }}</span>
+                  @if (t.totalComentarios > 0) {
+                    <span title="Comentarios">{{ t.totalComentarios }} coment.</span>
+                  }
+                </div>
+              </div>
+            } @empty {
+              <p class="coluna-vazia">Arraste tarefas aqui</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

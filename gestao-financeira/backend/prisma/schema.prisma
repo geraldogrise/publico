@@ -1,0 +1,203 @@
+// Prisma schema - Gestao Financeira Pessoal
+// Banco: SQLite (arquivo). Modelos de persistencia (adapters de infraestrutura).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 1. Usuario
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts     Account[]
+  categories   Category[]
+  transactions Transaction[]
+  budgets      Budget[]
+  goals        Goal[]
+  tags         Tag[]
+  recurring    RecurringTransaction[]
+  bills        Bill[]
+
+  @@map("users")
+}
+
+// 2. Conta (carteira / banco)
+model Account {
+  id             String   @id @default(uuid())
+  name           String
+  type           String // CHECKING | SAVINGS | WALLET | CREDIT_CARD | INVESTMENT
+  initialBalance Float    @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  userId       String
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  recurring    RecurringTransaction[]
+  bills        Bill[]
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+// 3. Categoria
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  type      String // INCOME | EXPENSE
+  color     String   @default("#3b82f6")
+  icon      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId       String
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  budgets      Budget[]
+  recurring    RecurringTransaction[]
+
+  @@index([userId])
+  @@map("categories")
+}
+
+// 4. Transacao (receita / despesa)
+model Transaction {
+  id          String   @id @default(uuid())
+  description String
+  amount      Float
+  type        String // INCOME | EXPENSE
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId  String
+  account    Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  tags TagsOnTransactions[]
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([categoryId])
+  @@map("transactions")
+}
+
+// 5. Orcamento (por categoria / mes)
+model Budget {
+  id        String   @id @default(uuid())
+  amount    Float
+  month     Int // 1-12
+  year      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryId, month, year])
+  @@index([userId])
+  @@map("budgets")
+}
+
+// 6. Meta de economia
+model Goal {
+  id            String    @id @default(uuid())
+  name          String
+  targetAmount  Float
+  currentAmount Float     @default(0)
+  deadline      DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("goals")
+}
+
+// 7. Etiqueta / Tag (many-to-many com Transacao)
+model Tag {
+  id        String   @id @default(uuid())
+  name      String
+  color     String   @default("#64748b")
+  createdAt DateTime @default(now())
+
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions TagsOnTransactions[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("tags")
+}
+
+// Tabela de juncao (many-to-many) Tag <-> Transacao
+model TagsOnTransactions {
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  tagId         String
+  tag           Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  assignedAt    DateTime    @default(now())
+
+  @@id([transactionId, tagId])
+  @@map("tags_on_transactions")
+}
+
+// 8. Transacao recorrente
+model RecurringTransaction {
+  id          String   @id @default(uuid())
+  description String
+  amount      Float
+  type        String // INCOME | EXPENSE
+  frequency   String // DAILY | WEEKLY | MONTHLY | YEARLY
+  nextRunDate DateTime
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId  String
+  account    Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("recurring_transactions")
+}
+
+// 9. Fatura / Conta a pagar
+model Bill {
+  id          String    @id @default(uuid())
+  description String
+  amount      Float
+  dueDate     DateTime
+  paid        Boolean   @default(false)
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId String?
+  account   Account? @relation(fields: [accountId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@map("bills")
+}

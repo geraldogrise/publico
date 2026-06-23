@@ -1,0 +1,142 @@
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.badge {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+
+.titulo {
+  font-size: 2.6rem;
+  font-weight: 800;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+
+.descricao {
+  font-size: 1.15rem;
+  color: var(--cor-texto-suave);
+  max-width: 620px;
+  margin: 0 auto 2rem;
+}
+
+.acoes {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.botaoPrimario,
+.botaoSecundario {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.botaoPrimario {
+  background: var(--cor-primaria);
+  color: #fff;
+}
+
+.botaoPrimario:hover {
+  background: var(--cor-primaria-escura);
+}
+
+.botaoSecundario {
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
+}
+
+.botaoSecundario:hover {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.card {
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.cardNumero {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--cor-primaria);
+  margin: 0;
+}
+
+.cardLabel {
+  color: var(--cor-texto-suave);
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+}
+
+.recursos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.recurso {
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.recurso h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.recurso p {
+  margin: 0;
+  color: var(--cor-texto-suave);
+  font-size: 0.9rem;
+}
+
+.demoBox {
+  margin-top: 2.5rem;
+  background: #f1f5f9;
+  border: 1px dashed #94a3b8;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  text-align: center;
+  color: var(--cor-texto-suave);
+  font-size: 0.95rem;
+}
+
+.demoBox code {
+  background: #e2e8f0;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  color: var(--cor-texto);
+}

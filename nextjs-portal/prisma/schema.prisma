@@ -1,0 +1,71 @@
+// Prisma schema do Portal Corporativo
+// Banco: SQLite (arquivo dev.db)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Papel {
+  ADMIN
+  EDITOR
+  LEITOR
+}
+
+model Usuario {
+  id          String       @id @default(cuid())
+  nome        String
+  email       String       @unique
+  senhaHash   String
+  papel       Papel        @default(LEITOR)
+  criadoEm    DateTime     @default(now())
+  atualizadoEm DateTime    @updatedAt
+
+  posts       Post[]
+  comentarios Comentario[]
+}
+
+model Categoria {
+  id        String   @id @default(cuid())
+  nome      String   @unique
+  slug      String   @unique
+  descricao String?
+  criadoEm  DateTime @default(now())
+
+  posts     Post[]
+}
+
+model Post {
+  id          String       @id @default(cuid())
+  titulo      String
+  slug        String       @unique
+  resumo      String?
+  conteudo    String
+  publicado   Boolean      @default(false)
+  criadoEm    DateTime     @default(now())
+  atualizadoEm DateTime    @updatedAt
+
+  autorId     String
+  autor       Usuario      @relation(fields: [autorId], references: [id], onDelete: Cascade)
+
+  categoriaId String?
+  categoria   Categoria?   @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+
+  comentarios Comentario[]
+}
+
+model Comentario {
+  id        String   @id @default(cuid())
+  conteudo  String
+  criadoEm  DateTime @default(now())
+
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  autorId   String
+  autor     Usuario  @relation(fields: [autorId], references: [id], onDelete: Cascade)
+}

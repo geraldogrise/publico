@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: ./backend
+    container_name: gestao-financeira-api
+    ports:
+      - "3001:3001"   # API Node (React consome em http://localhost:3001)
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DATABASE_URL=file:./dev.db
+      - JWT_SECRET=troque-em-producao
+      - CORS_ORIGIN=http://localhost:5173
+
+  frontend:
+    build: ./frontend
+    container_name: gestao-financeira-web
+    ports:
+      - "5173:80"     # http://localhost:5173
+    depends_on:
+      - backend

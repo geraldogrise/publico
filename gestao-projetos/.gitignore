@@ -1,0 +1,25 @@
+# ===== .NET =====
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.db
+*.db-shm
+*.db-wal
+
+# ===== Angular / Node =====
+node_modules/
+dist/
+.angular/
+out-tsc/
+npm-debug.log*
+yarn-error.log
+
+# ===== Geral =====
+.DS_Store
+Thumbs.db
+*.log
+.env
+.idea/
+.vscode/

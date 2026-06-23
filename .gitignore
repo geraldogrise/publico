@@ -1,0 +1,31 @@
+# ===== Node / Frontend =====
+node_modules/
+dist/
+build/
+.next/
+.angular/
+coverage/
+*.tsbuildinfo
+
+# ===== .NET =====
+bin/
+obj/
+TestResults/
+*.user
+.vs/
+
+# ===== Banco de dados local (SQLite) =====
+*.db
+*.db-journal
+*.sqlite
+
+# ===== Ambiente / segredos =====
+.env
+.env.*
+!.env.example
+
+# ===== Logs / SO =====
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db

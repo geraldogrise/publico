@@ -1,0 +1,35 @@
+<div class="tela-login">
+  <form class="cartao caixa-login" [formGroup]="form" (ngSubmit)="entrar()">
+    <div class="cabecalho">
+      <span class="logo">GP</span>
+      <h1>Gestao de Projetos</h1>
+      <p>Acesse para gerenciar seus projetos e tarefas.</p>
+    </div>
+
+    @if (erro()) {
+      <div class="alerta">{{ erro() }}</div>
+    }
+
+    <div class="campo">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" formControlName="email" placeholder="voce@empresa.com" />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <span class="erro-campo">Informe um e-mail valido.</span>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" formControlName="senha" placeholder="********" />
+      @if (form.controls.senha.touched && form.controls.senha.invalid) {
+        <span class="erro-campo">Informe a senha.</span>
+      }
+    </div>
+
+    <button type="submit" class="btn btn-primario largura-total" [disabled]="carregando()">
+      {{ carregando() ? 'Entrando...' : 'Entrar' }}
+    </button>
+
+    <p class="dica">Demo: <strong>admin&#64;demo.com</strong> / <strong>123456</strong></p>
+  </form>
+</div>

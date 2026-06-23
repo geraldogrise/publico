@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: ./backend
+    container_name: gestao-projetos-api
+    ports:
+      - "5000:8080"   # API .NET (Angular consome em http://localhost:5000)
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+  frontend:
+    build: ./frontend
+    container_name: gestao-projetos-web
+    ports:
+      - "4200:80"     # http://localhost:4200
+    depends_on:
+      - backend

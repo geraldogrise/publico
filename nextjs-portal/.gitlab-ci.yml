@@ -1,0 +1,21 @@
+stages:
+  - build
+
+build:
+  stage: build
+  image: node:22-alpine
+  variables:
+    NEXTAUTH_SECRET: ci-dummy-secret-please-change
+    NEXTAUTH_URL: http://localhost:3000
+    DATABASE_URL: file:./dev.db
+  cache:
+    paths:
+      - node_modules
+  script:
+    - npm ci
+    - npx prisma generate
+    - npm run build
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - .next

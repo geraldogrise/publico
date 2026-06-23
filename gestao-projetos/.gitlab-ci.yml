@@ -1,0 +1,38 @@
+stages:
+  - build
+  - test
+
+backend:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  script:
+    - cd backend
+    - dotnet restore GestaoProjetos.sln
+    - dotnet build GestaoProjetos.sln --no-restore -c Release
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - backend/**/bin/Release
+
+backend-test:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  script:
+    - cd backend
+    - dotnet test --collect:"XPlat Code Coverage"
+  coverage: '/Total\s*\|\s*(\d+(?:\.\d+)?)%/'
+
+frontend:
+  stage: build
+  image: node:22-alpine
+  cache:
+    paths:
+      - frontend/node_modules
+  script:
+    - cd frontend
+    - npm ci
+    - npm run build
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - frontend/dist

@@ -1,0 +1,19 @@
+@if (autenticado()) {
+  <header class="topo">
+    <div class="topo-conteudo">
+      <a routerLink="/projetos" class="marca">
+        <span class="logo">GP</span>
+        <span>Gestao de Projetos</span>
+      </a>
+      <nav class="acoes">
+        <a routerLink="/projetos" class="link-nav">Projetos</a>
+        <span class="usuario">{{ usuario()?.nome }}</span>
+        <button class="btn btn-secundario" (click)="sair()">Sair</button>
+      </nav>
+    </div>
+  </header>
+}
+
+<main>
+  <router-outlet />
+</main>

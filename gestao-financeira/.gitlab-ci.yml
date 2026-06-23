@@ -1,0 +1,38 @@
+stages:
+  - build
+  - test
+
+backend:
+  stage: build
+  image: node:22-alpine
+  cache:
+    paths:
+      - backend/node_modules
+  script:
+    - cd backend
+    - npm ci
+    - npm run build
+
+backend-test:
+  stage: test
+  image: node:22-alpine
+  script:
+    - cd backend
+    - npm ci
+    - npm run test:coverage
+  coverage: '/All files\s*\|\s*(\d+(?:\.\d+)?)/'
+
+frontend:
+  stage: build
+  image: node:22-alpine
+  cache:
+    paths:
+      - frontend/node_modules
+  script:
+    - cd frontend
+    - npm ci
+    - npm run build
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - frontend/dist
